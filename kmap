@@ -1,0 +1,80 @@
+
+#include <iostream>
+
+using namespace std;
+
+// Function to get minterms from the user
+void getMinterms(int minterms[], int& numMinterms) {
+    cout << "Enter the number of minterms: ";
+    cin >> numMinterms;
+
+    cout << "Enter the minterms (space separated): ";
+    for (int i = 0; i < numMinterms; ++i) {
+        int minterm;
+        cin >> minterm;
+        if (minterm < 0 || minterm >= 16) {
+            cout << "Invalid minterm! Please enter a valid minterm (0 - 15): ";
+            --i;
+        } else {
+            minterms[i] = minterm;
+        }
+    }
+}
+
+
+void displayKMap(int minterms[], int numMinterms) {
+    bool kmap[4][4] = {false};
+
+    for (int i = 0; i < numMinterms; ++i) {
+        int minterm = minterms[i];
+        int row = (minterm & 12) >> 2; // Bits 2 and 3 for row
+        int col = minterm & 3;         // Bits 0 and 1 for column
+        kmap[row][col] = true;
+    }
+
+  
+    cout << "\nK-map:\n";
+    for (int row = 0; row < 4; ++row) {
+        for (int col = 0; col < 4; ++col) {
+            cout << kmap[row][col] << " ";
+        }
+        cout << endl;
+    }
+
+    string simplifiedExpression = "";
+    
+    // Check for all 1s (True for all inputs)
+    bool allOnes = true;
+    for (int row = 0; row < 4; ++row) {
+        for (int col = 0; col < 4; ++col) {
+            if (!kmap[row][col]) {
+                allOnes = false;
+                break;
+            }
+        }
+        if (!allOnes) break;
+    }
+    if (allOnes) {
+        cout << "Simplified Expression: 1 (True for all inputs)" << endl;
+        return;
+    }
+
+
+    cout << "Simplified Expression: ";
+    for (int i = 0; i < numMinterms; ++i) {
+        if (i > 0) cout << " + ";
+        cout << "m" << minterms[i];
+    }
+    cout << endl;
+}
+
+int main() {
+    const int maxMinterms = 16;  // Maximum number of minterms for 4 variables
+    int minterms[maxMinterms];
+    int numMinterms;
+
+    getMinterms(minterms, numMinterms);
+    displayKMap(minterms, numMinterms);
+
+    return 0;
+}
